@@ -212,7 +212,5 @@ v2/vision
 - Refactor da rota v2_vision
 
 ## ✍🏻 Autores
-- [Lívia Marques Rodrigues](https://github.com/livmrqs)
 - [Pâmela Aliny Cleto Pavan](https://github.com/PamelaPavan)
-- [Pedro Eduardo Garcia](https://github.com/PedroEduardoGarcia)
 
