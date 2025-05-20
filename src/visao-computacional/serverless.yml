@@ -1,0 +1,120 @@
+service: vision
+
+provider:
+  name: aws
+  runtime: python3.12
+  memorySize: 256
+  stage: ${opt:stage, 'development'}
+  region: us-east-1
+  stackName: vision-stack
+  timeout: 25
+  deploymentPrefix: vision
+  tags:
+    Project: pbAWS
+    CostCenter: pbAWS
+  iam:
+    role:
+      statements:
+        # Define permissões para o Recognition - precisa refatorar o *
+        - Effect: Allow
+          Action:
+            - rekognition:*
+          Resource: '*'
+        # Define permissões para o Bedrock - precisa refatorar o *
+        - Effect: Allow
+          Action:
+            - bedrock:*
+          Resource: '*'
+        # Define permissões para o S3 - precisar rever os Actions
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+            - s3:GetObject
+            - s3:PutObject
+            - s3:CreateBucket
+            - s3:DeleteBucket
+            - s3:PutBucketPolicy
+            - s3:DeleteBucketPolicy
+            - s3:GetBucketPolicy
+            - s3:PutBucketAcl
+            - s3:PutObjectAcl
+          Resource:
+            - arn:aws:s3:::${env:S3_BUCKET_NAME}
+            - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+  
+functions:
+  health:
+    handler: routes.health
+    events:
+      - httpApi:
+          path: /
+          method: get
+  v1Description:
+    handler: routes.v1_description
+    events:
+      - httpApi:
+          path: /v1
+          method: get
+  v1Vision:
+    handler: routes.v1_vision
+    events:
+      - httpApi:
+          path: /v1/vision
+          method: post
+  v2Description:
+    handler: routes.v2_description
+    events:
+      - httpApi:
+          path: /v2
+          method: get
+  v2Vision:
+    handler: routes.v2_vision
+    events:
+      - httpApi:
+          path: /v2/vision
+          method: post
+
+resources:
+  Resources:
+    # Cria o bucket no S3
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:S3_BUCKET_NAME}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: BucketOwnerEnforced
+    # Define a política de bucket para permitir acesso público
+    S3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref S3Bucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            # Permitir leitura pública dos objetos
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action: 
+                - s3:GetObject
+              Resource: arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+            # Permitir colocar objetos no bucket
+            - Sid: PublicWritePutObject
+              Effect: Allow
+              Principal: "*"
+              Action: 
+                - s3:PutObject
+              Resource: arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+
+  Outputs:
+    S3BucketName:
+      Value: !Ref S3Bucket
+      Export:
+        Name: S3BucketName
+                          
+plugins:
+  - serverless-dotenv-plugin

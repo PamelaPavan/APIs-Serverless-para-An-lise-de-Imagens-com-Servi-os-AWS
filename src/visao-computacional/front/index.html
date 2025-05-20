@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sprint 8</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../../../assets/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="../../../assets/maquina.jpg" alt="Banner da Máquina" class="banner">
+        <h1>Análise de Imagens com Rekognition</h1>
+    </header>
+    <main>
+        <div class="form-image-container">
+            <form id="image-form" action="#">
+                <label for="foto">Nome da Imagem:</label>
+                <input type="text" id="foto" name="foto" required>
+                <button type="submit">Analisar Pet</button>
+                <button type="button" id="analisar-emocao">Analisar Emoção</button>
+                <button type="button" id="ver-imagem">Ver Imagem</button>
+            </form>
+            <div id="image-container">
+            </div>
+        </div>
+        <div id="result">
+            <!-- Tabela de resultados -->
+        </div>
+    </main>
+    <script src="index.js"></script>
+</body>
+</html>

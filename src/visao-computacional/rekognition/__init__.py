@@ -1,0 +1,2 @@
+from .rekognition_image_detection import RekognitionImage
+from .rekognition_objects import RekognitionFace, RekognitionLabel
